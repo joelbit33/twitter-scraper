@@ -17,14 +17,14 @@ def fetch_programming_lang():
             break
         # declare the attributes to be returned
         tweet_list.append(
-            [tweet.rawContent])
+            [tweet.content])
 
     for i, tweet in enumerate(sntwitter.TwitterSearchScraper('#code').get_items()):
         if i > max_tweets:  # number of tweets you want to scrape
             break
         # declare the attributes to be returned
         tweet_list.append(
-            [tweet.rawContent])
+            [tweet.content])
 
     tweet_df = pd.DataFrame(tweet_list, columns=[
         'text'])
