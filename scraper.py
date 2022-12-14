@@ -1,82 +1,51 @@
 # importing libraries and packages
 import snscrape.modules.twitter as sntwitter
 import pandas as pd
+import df_functions as dff  # pandas Dataframe functions for cleaning and counting
 
 # Creating global list to append tweet data
 
 
 # Setting a max amount of tweets to fetch as global var
 max_tweets = 25
+tweet_list = []
 
 
-def fetch_programming_lang():
-    tweet_list = []
-    # Using TwitterSearchScraper to scrape data and append tweets to list about programming languages
-    for i, tweet in enumerate(sntwitter.TwitterSearchScraper('#programming').get_items()):
-        if i > max_tweets:  # number of tweets you want to scrape
+def fetch_topic(keyword):
+    # Scrape and append tweets to tweet_list
+    for i, tweet in enumerate(sntwitter.TwitterSearchScraper(keyword).get_items()):
+        if i >= max_tweets:  # number of tweets to scrape
             break
-        # declare the attributes to be returned
-        tweet_list.append(
-            [tweet.content])
 
-    for i, tweet in enumerate(sntwitter.TwitterSearchScraper('#code').get_items()):
-        if i > max_tweets:  # number of tweets you want to scrape
-            break
-        # declare the attributes to be returned
-        tweet_list.append(
-            [tweet.content])
+        # Add the tweet to the list
+        tweet_list.append([tweet.content])
 
-    tweet_df = pd.DataFrame(tweet_list, columns=[
-        'text'])
-    # Replace punctuations with blanks and lower strings
-    tweet_df['text'] = tweet_df['text'].str.lower(
-    ).str.replace('[!,.":()#/-]', '', regex=True)
 
-    # Creates a pandas Dataframe containing words from df that
-    # are used in tweets and gets their frequency
-    tweet_word_count = tweet_df.text.str.split(
-        expand=True).stack().value_counts().reset_index()
+def main(topic):
 
-    # Adds column names to the Dataframe
-    tweet_word_count.columns = ['Word', 'Frequency']
+    if topic == "programming":
+        # Programming languages, hardcoded for now
+        topic_keywords = ['python', 'javascript', 'java', 'c++']
 
-    # Drop index
+        fetch_topic('#programming')
+        fetch_topic('#code')
 
-    # Programming languages
-    prog_lang = ['python', 'javascript', 'java', 'c++']
+    elif topic == 'sql':
+        # SQL flavors, hardcoded for now
+        topic_keywords = ['sqlserver', 'postgresql',
+                          'mysql', 'sqlite']
+        fetch_topic('#sql')
+        fetch_topic('#database')
 
-    # Delete all words in dataframe that exists in stop_words
-    for index, row in tweet_word_count.iterrows():
-        if row['Word'] not in prog_lang:
-            tweet_word_count.drop(index, inplace=True)
+    # Create a DataFrame from the list of tweets
+    tweet_df = dff.create_tweet_dataframe(tweet_list)
+
+    # Replace punctuations with blanks and lowercase strings
+    tweet_df = dff.clean_dataframe(tweet_df)
+
+    # Convert tweet_df into a dataframe containing keywords used in tweets and their frequencies
+    tweet_word_count = dff.get_tweet_word_count(tweet_df)
+
+    tweet_word_count = dff.drop_words(topic_keywords, tweet_word_count)
 
     return tweet_word_count
-
-
-def fetch_sql_flavors():
-    tweet_list = []
-    # Using TwitterSearchScraper to scrape data and append tweets to list about sql flavors
-    for i, tweet in enumerate(sntwitter.TwitterSearchScraper('#sql').get_items()):
-        if i > max_tweets:
-            break
-        tweet_list.append(
-            [tweet.rawContent])
-
-    tweet_df = pd.DataFrame(tweet_list, columns=[
-        'text'])
-    # Replace punctuations with blanks and lower strings
-    tweet_df['text'] = tweet_df['text'].str.lower(
-    ).str.replace('[!,."():#-/]', '', regex=True)
-
-    # Creates a pandas Dataframe containing words from df that
-    # are used in tweets and gets their frequency
-    tweet_word_count = tweet_df.text.str.split(
-        expand=True).stack().value_counts().reset_index()
-
-    # Adds column names to the Dataframe
-    tweet_word_count.columns = ['Word', 'Frequency']
-
-    return tweet_word_count
-
-
-# tweet_df.to_csv(f"csv_files/{user_input}.csv")
