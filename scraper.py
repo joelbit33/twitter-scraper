@@ -6,7 +6,7 @@ import df_functions as dff  # pandas Dataframe functions for cleaning and counti
 
 
 # Setting a max amount of tweets to fetch as global var
-max_tweets = 25
+max_tweets = 500
 tweet_list = []
 
 
