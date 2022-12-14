@@ -1,6 +1,5 @@
 # importing libraries and packages
 import snscrape.modules.twitter as sntwitter
-import pandas as pd
 import df_functions as dff  # pandas Dataframe functions for cleaning and counting
 
 # Creating global list to append tweet data
@@ -21,7 +20,7 @@ def fetch_topic(keyword):
         tweet_list.append([tweet.content])
 
 
-def main(topic):
+def app(topic):
 
     if topic == "programming":
         # Programming languages, hardcoded for now

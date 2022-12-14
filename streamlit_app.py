@@ -19,7 +19,7 @@ if language_button:
     #st.success('Fetching tweets....')
     with st.spinner('Fetching tweets...'):
 
-        tweet_word_count = scraper.main('programming')
+        tweet_word_count = scraper.app('programming')
         # Reset index again on the new df
         tweet_word_count.reset_index(drop=True, inplace=True)
 
@@ -46,7 +46,7 @@ elif sql_button:
     #st.success('Fetching tweets....')
     with st.spinner('Fetching tweets...'):
 
-        tweet_word_count = scraper.main('sql')
+        tweet_word_count = scraper.app('sql')
         # Reset index again on the new df
         tweet_word_count.reset_index(drop=True, inplace=True)
 
